@@ -11,13 +11,16 @@ import (
 
 // key长度必须为16, 24或者32, 返回hex.EncodeToString 后的字符串
 // 这边IV直接就使用 key
-func AesCBCStrEncrypt(key, origin string) string {
+func AesCBCStrEncrypt(key, origin string) (string, error) {
 	// 转成字节数组
-	originByte := []byte(origin)
-	keyByte := []byte(key)
+	originByte := Str2SliceByte(origin)
+	keyByte := Str2SliceByte(key)
 	// 分组秘钥
 	// NewCipher该函数限制了输入k的长度必须为16, 24或者32
-	block, _ := aes.NewCipher(keyByte)
+	block, err := aes.NewCipher(keyByte)
+	if err != nil {
+		return "", NewSecurityError("key 不可用, 必须为16, 24, 32长度的字符!")
+	}
 	// 获取秘钥块的长度
 	blockSize := block.BlockSize()
 	// 补全码
@@ -28,15 +31,18 @@ func AesCBCStrEncrypt(key, origin string) string {
 	out := make([]byte, len(pk))
 	// 加密
 	blockMode.CryptBlocks(out, pk)
-	return hex.EncodeToString(out)
+	return hex.EncodeToString(out), nil
 }
 
 // key长度必须为16, 24或者32, 参数origin 为hex.EncodeToString 后的字符串
 // 这边IV直接就使用 key
 func AesCBCStrDecrypt(key, origin string) (string, error) {
 	// 转成字节数组
-	originByte, _ := hex.DecodeString(origin)
-	keyByte := []byte(key)
+	originByte, err := hex.DecodeString(origin)
+	if err != nil {
+		return "", NewSecurityError("密文错误, 无法解密!")
+	}
+	keyByte := Str2SliceByte(key)
 	// 分组秘钥
 	block, _ := aes.NewCipher(keyByte)
 	// 获取秘钥块的长度
@@ -49,7 +55,7 @@ func AesCBCStrDecrypt(key, origin string) (string, error) {
 	blockMode.CryptBlocks(out, originByte)
 	//去除加密是补全的字节, 加密是把补全的位数存入了加密字符串字节切片的最后几位
 	// 去补全码
-	out, err := pkcs7UnPadding(out)
+	out, err = pkcs7UnPadding(out)
 	return string(out), err
 }
 
@@ -57,15 +63,15 @@ func AesCBCStrDecrypt(key, origin string) (string, error) {
 // key长度必须为16, 24或者32
 func AesCRTCrypt(key, origin string) (string, error) {
 	// 转成字节数组
-	plainText := []byte(origin)
-	keyByte := []byte(key)
+	plainText := Str2SliceByte(origin)
+	keyByte := Str2SliceByte(key)
 	//1. 创建cipher.Block接口
 	block, err := aes.NewCipher(keyByte)
 	if err != nil {
 		return "", err
 	}
 	//2. 创建分组模式，在crypto/cipher包中
-	iv := bytes.Repeat([]byte("1"), block.BlockSize())
+	iv := bytes.Repeat(Str2SliceByte("1"), block.BlockSize())
 	stream := cipher.NewCTR(block, iv)
 	//3. 加密
 	dst := make([]byte, len(plainText))
@@ -78,8 +84,8 @@ func AesCRTCrypt(key, origin string) (string, error) {
 // key长度必须为16, 24或者32
 func AesOFBStrEncrypt(key, origin string) (string, error) {
 	// 转成字节数组
-	originByte := []byte(origin)
-	keyByte := []byte(key)
+	originByte := Str2SliceByte(origin)
+	keyByte := Str2SliceByte(key)
 	originByte = pkcs7Padding(originByte, aes.BlockSize)
 
 	block, _ := aes.NewCipher(keyByte)
@@ -96,8 +102,8 @@ func AesOFBStrEncrypt(key, origin string) (string, error) {
 
 // key长度必须为16, 24或者32
 func AesOFBStrDecrypt(key, origin string) (string, error) {
-	originByte := []byte(origin)
-	keyByte := []byte(key)
+	originByte := Str2SliceByte(origin)
+	keyByte := Str2SliceByte(key)
 	block, _ := aes.NewCipher(keyByte)
 	iv := originByte[:aes.BlockSize]
 	originByte = originByte[aes.BlockSize:]
@@ -126,12 +132,12 @@ func pkcs7Padding(ciphertext []byte, blocksize int) []byte {
 func pkcs7UnPadding(origin []byte) ([]byte, error) {
 	length := len(origin)
 	if length < 1 {
-		return []byte(""), SecurityError{Msg: "解密失败!"}
+		return Str2SliceByte(""), SecurityError{Msg: "解密失败!"}
 	}
 	unpadding := int(origin[length-1])
 	//这边取最后一位就一定是加密时补全的位数
 	if length < unpadding {
-		return []byte(""), SecurityError{Msg: "解密失败!"}
+		return Str2SliceByte(""), SecurityError{Msg: "解密失败!"}
 	}
 	return origin[:(length - unpadding)], nil
 }
