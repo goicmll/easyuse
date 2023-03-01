@@ -7,7 +7,7 @@ import (
 )
 
 // 制作jwt串
-func JwtMake(id, secret, issuer, subject, audience string, maxAge int64) (string, error) {
+func JwtMake(id, secret, issuer, subject, audience string, maxAge int) (string, error) {
 	claim := jwt.RegisteredClaims{
 		Issuer:    issuer,
 		Subject:   subject,
