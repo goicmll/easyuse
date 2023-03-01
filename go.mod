@@ -1,4 +1,4 @@
-module security
+module github.com/goicmll/security
 
 go 1.20
 
