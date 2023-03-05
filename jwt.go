@@ -3,10 +3,10 @@ package security
 import (
 	"time"
 
-	jwt "github.com/golang-jwt/jwt/v5"
+	"github.com/golang-jwt/jwt/v5"
 )
 
-// 制作jwt串
+// JwtMake 制作jwt串
 func JwtMake(id, secret, issuer, subject, audience string, maxAge int) (string, error) {
 	claim := jwt.RegisteredClaims{
 		Issuer:    issuer,
@@ -25,7 +25,7 @@ func JwtMake(id, secret, issuer, subject, audience string, maxAge int) (string, 
 	return jwtStr, nil
 }
 
-// 解析jwt
+// JwtParse 解析jwt
 func JwtParse(jwtStr, secret string) (*jwt.RegisteredClaims, error) {
 	tok, err := jwt.ParseWithClaims(jwtStr, &jwt.RegisteredClaims{}, func(t *jwt.Token) (interface{}, error) {
 		return Str2SliceByte(secret), nil

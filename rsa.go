@@ -8,7 +8,7 @@ import (
 	"encoding/pem"
 )
 
-// 解密
+// RsaDecrypt 解密
 func RsaDecrypt(originBase64, privateKey string) (string, error) {
 	originByte, err := base64.StdEncoding.DecodeString(originBase64)
 	if err != nil {
@@ -33,7 +33,7 @@ func RsaDecrypt(originBase64, privateKey string) (string, error) {
 	return string(out), nil
 }
 
-// ########### RSA 加解密
+// RsaEncrypt ########### RSA 加解密
 func RsaEncrypt(origin, publicKey string) (string, error) {
 	originByte := []byte(origin)
 	keyByte := []byte(publicKey)

@@ -7,7 +7,7 @@ import (
 )
 
 func GenerateRandStr(n int) string {
-	var lettersLen int = 69
+	var lettersLen = 69
 	var letters = Str2SliceByte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!#%^&()")
 	rd := rand.New(rand.NewSource(time.Now().UnixNano()))
 	r := make([]byte, n)

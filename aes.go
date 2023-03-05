@@ -9,7 +9,7 @@ import (
 	"io"
 )
 
-// key长度必须为16, 24或者32, 返回hex.EncodeToString 后的字符串
+// AesCBCStrEncrypt key长度必须为16, 24或者32, 返回hex.EncodeToString 后的字符串
 // 这边IV直接就使用 key
 func AesCBCStrEncrypt(key, origin string) (string, error) {
 	// 转成字节数组
