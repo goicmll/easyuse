@@ -1,9 +1,8 @@
-package security
+package habits
 
 import (
 	"math/rand"
 	"time"
-	"unsafe"
 )
 
 func GenerateRandStr(n int) string {
@@ -15,18 +14,4 @@ func GenerateRandStr(n int) string {
 		r[i] = letters[rd.Intn(lettersLen)]
 	}
 	return Bytes2Str(r)
-}
-
-func Str2SliceByte(s string) []byte {
-    var b []byte
-    bh := (*reflect.SliceHeader)(unsafe.Pointer(&b))
-    sh := (*reflect.StringHeader)(unsafe.Pointer(&s))
-    bh.Data = sh.Data
-    bh.Cap = sh.Len
-    bh.Len = sh.Len
-    return b
-}
-
-func Bytes2Str(b []byte) string {
-	return *(*string)(unsafe.Pointer(&b))
 }

@@ -1,4 +1,4 @@
-package security
+package habits
 
 import "golang.org/x/crypto/bcrypt"
 
@@ -6,7 +6,7 @@ import "golang.org/x/crypto/bcrypt"
 func BcryptStr(str string) (string, error) {
 	b, err := bcrypt.GenerateFromPassword(Str2SliceByte(str), bcrypt.DefaultCost)
 	if err != nil {
-		return "", NewSecurityError(err.Error())
+		return "", NewHabitError(err.Error())
 	}
 	return Bytes2Str(b), nil
 }

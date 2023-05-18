@@ -1,4 +1,4 @@
-package security
+package habits
 
 import (
 	"bytes"
@@ -19,7 +19,7 @@ func AesCBCStrEncrypt(key, origin string) (string, error) {
 	// NewCipher该函数限制了输入k的长度必须为16, 24或者32
 	block, err := aes.NewCipher(keyByte)
 	if err != nil {
-		return "", NewSecurityError("key 不可用, 必须为16, 24, 32长度的字符!")
+		return "", NewHabitError("key 不可用, 必须为16, 24, 32长度的字符!")
 	}
 	// 获取秘钥块的长度
 	blockSize := block.BlockSize()
@@ -40,7 +40,7 @@ func AesCBCStrDecrypt(key, origin string) (string, error) {
 	// 转成字节数组
 	originByte, err := hex.DecodeString(origin)
 	if err != nil {
-		return "", NewSecurityError("密文错误, 无法解密!")
+		return "", NewHabitError("密文错误, 无法解密!")
 	}
 	keyByte := Str2SliceByte(key)
 	// 分组秘钥
@@ -108,7 +108,7 @@ func AesOFBStrDecrypt(key, origin string) (string, error) {
 	iv := originByte[:aes.BlockSize]
 	originByte = originByte[aes.BlockSize:]
 	if len(originByte)%aes.BlockSize != 0 {
-		return "", SecurityError{Msg: "解密失败: data is not a multiple of the block size"}
+		return "", HabitError{Msg: "解密失败: data is not a multiple of the block size"}
 	}
 
 	out := make([]byte, len(originByte))
@@ -132,12 +132,12 @@ func pkcs7Padding(ciphertext []byte, blocksize int) []byte {
 func pkcs7UnPadding(origin []byte) ([]byte, error) {
 	length := len(origin)
 	if length < 1 {
-		return Str2SliceByte(""), SecurityError{Msg: "解密失败!"}
+		return Str2SliceByte(""), HabitError{Msg: "解密失败!"}
 	}
 	unpadding := int(origin[length-1])
 	//这边取最后一位就一定是加密时补全的位数
 	if length < unpadding {
-		return Str2SliceByte(""), SecurityError{Msg: "解密失败!"}
+		return Str2SliceByte(""), HabitError{Msg: "解密失败!"}
 	}
 	return origin[:(length - unpadding)], nil
 }

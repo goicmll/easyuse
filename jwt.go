@@ -1,4 +1,4 @@
-package security
+package habits
 
 import (
 	"time"
@@ -20,7 +20,7 @@ func JwtMake(id, secret, issuer, subject, audience string, maxAge int) (string, 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
 	jwtStr, err := token.SignedString(Str2SliceByte(secret))
 	if err != nil {
-		return "", NewSecurityError(err.Error())
+		return "", NewHabitError(err.Error())
 	}
 	return jwtStr, nil
 }
@@ -31,10 +31,10 @@ func JwtParse(jwtStr, secret string) (*jwt.RegisteredClaims, error) {
 		return Str2SliceByte(secret), nil
 	})
 	if err != nil {
-		return nil, NewSecurityError("token 不可用!")
+		return nil, NewHabitError("token 不可用!")
 	}
 	if claims, ok := tok.Claims.(*jwt.RegisteredClaims); ok && tok.Valid {
 		return claims, nil
 	}
-	return nil, NewSecurityError("token 不可用!")
+	return nil, NewHabitError("token 不可用!")
 }

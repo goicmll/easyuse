@@ -1,4 +1,4 @@
-package security
+package habits
 
 import (
 	"net/http"
