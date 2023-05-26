@@ -51,7 +51,7 @@ func initZapLog() {
 }
 
 // 写入文件
-func getFileWriter(filePath string) io.Writer {
+func GetFileWriter(filePath string) io.Writer {
 	lumberJackLogger := &lumberjack.Logger{
 		Filename:   filePath,
 		MaxSize:    100, // 单个文件最大100M
@@ -86,8 +86,8 @@ func newLogger() {
 		// 获取文件的 io.Writer
 		var infoWriter io.Writer
 		var errorWriter io.Writer
-		infoWriter = getFileWriter(path.Join(logDir, "info.log"))
-		errorWriter = getFileWriter(path.Join(logDir, "error.log"))
+		infoWriter = GetFileWriter(path.Join(logDir, "info.log"))
+		errorWriter = GetFileWriter(path.Join(logDir, "error.log"))
 		// 自定义写入 info.log 文件的日志级别
 		var infoLevel = zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
 			return lvl <= zapcore.WarnLevel && lvl >= zapcore.Level(level)
