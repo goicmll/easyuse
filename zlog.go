@@ -111,6 +111,6 @@ func newLogger() {
 	Sugar = Logger.Sugar()
 }
 
-func GinFields(requestID, uri, serviceName string) []zap.Field {
+func RequestField(requestID, uri, serviceName string) []zap.Field {
 	return []zap.Field{zap.String("RID", requestID), zap.String("URI", uri), zap.String("SN", serviceName)}
 }
