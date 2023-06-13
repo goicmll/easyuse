@@ -70,7 +70,7 @@ func newLogger() {
 	encoderConfig.TimeKey = "dt"
 	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
 	encoderConfig.EncodeTime = func(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
-		enc.AppendString(t.Format(time.RFC3339))
+		enc.AppendString(t.Format(time.DateTime))
 	}
 	var zapCores = make([]zapcore.Core, 1, 4)
 	//同时将日志输出到控制台

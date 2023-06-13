@@ -5,11 +5,15 @@ import (
 	"time"
 )
 
-var L1 = Str2SliceByte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!#%^&()")
-var L2 = Str2SliceByte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
-var L3 = Str2SliceByte("0123456789")
+// 预定义随机字符串源
+var S1 = Str2SliceByte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!#%^&()")
+var S2 = Str2SliceByte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+var S3 = Str2SliceByte("abcdefghijklmnopqrstuvwxyz")
+var S4 = Str2SliceByte("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+var S5 = Str2SliceByte("0123456789")
 
-func GenerateRandStr(n int, source []byte) string {
+// 生成随机字符传
+func Random(n int, source []byte) string {
 	var lettersLen = len(source)
 	rd := rand.New(rand.NewSource(time.Now().UnixNano()))
 	r := make([]byte, n)
