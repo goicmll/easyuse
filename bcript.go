@@ -6,7 +6,7 @@ import "golang.org/x/crypto/bcrypt"
 func BcryptStr(str string) (string, error) {
 	b, err := bcrypt.GenerateFromPassword(Str2SliceByte(str), bcrypt.DefaultCost)
 	if err != nil {
-		return "", NewHabitError(err.Error())
+		return "", NewEasyUseError(err.Error())
 	}
 	return Bytes2Str(b), nil
 }

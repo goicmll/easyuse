@@ -1,13 +1,13 @@
 package eu
 
-type SecurityError struct {
+type EasyUseError struct {
 	Msg string
 }
 
-func (receiver SecurityError) Error() string {
+func (receiver EasyUseError) Error() string {
 	return receiver.Msg
 }
 
-func NewSecurityError(Msg string) *SecurityError {
-	return &SecurityError{Msg: Msg}
+func NewEasyUseError(Msg string) *EasyUseError {
+	return &EasyUseError{Msg: Msg}
 }
