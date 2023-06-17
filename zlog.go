@@ -11,33 +11,34 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-var logDir string
-
-// 设置工作目录
-func SetLogDir(path string) {
-	logDir = path
-	newLogger()
-}
-
-var level int8 = 0
-
-// 设置日志级别
-func SetLevel(lv int8) {
-	level = lv
-	newLogger()
-}
-
-var enableFile bool = false
-
-// 设置是否写入文件
-func SetEnableFile(enable bool) {
-	enableFile = enable
-	newLogger()
-}
-
+var LogConfig *logConfig
 var Logger *zap.Logger
 var Sugar *zap.SugaredLogger
-var encoderConfig zapcore.EncoderConfig
+
+// Logger 和 Sugar的全局参数
+type logConfig struct {
+	enableFile bool
+	logDir     string
+	level      int8
+}
+
+// 设置工作目录
+func (ls *logConfig) SetLogDir(path string) {
+	ls.logDir = path
+	Logger, Sugar = newLogger()
+}
+
+// 设置日志级别
+func (ls *logConfig) SetLevel(lv int8) {
+	ls.level = lv
+	Logger, Sugar = newLogger()
+}
+
+// 设置是否写入文件
+func (ls *logConfig) SetEnableFile(enable bool) {
+	ls.enableFile = enable
+	Logger, Sugar = newLogger()
+}
 
 // 初始化日志对象
 func initZapLog() {
@@ -46,8 +47,12 @@ func initZapLog() {
 	if err != nil {
 		panic(err)
 	}
-	SetLogDir(path.Join(wd, "logs"))
-	newLogger()
+	LogConfig = &logConfig{
+		enableFile: false,
+		logDir:     path.Join(wd, "logs"),
+		level:      0,
+	}
+	Logger, Sugar = newLogger()
 }
 
 // 写入文件
@@ -64,9 +69,9 @@ func GetFileWriter(filePath string) io.Writer {
 }
 
 // 新建Logger和Sugar对象
-func newLogger() {
+func newLogger() (*zap.Logger, *zap.SugaredLogger) {
 
-	encoderConfig = zap.NewProductionEncoderConfig()
+	encoderConfig := zap.NewProductionEncoderConfig()
 	encoderConfig.TimeKey = "dt"
 	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
 	encoderConfig.EncodeTime = func(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
@@ -74,11 +79,11 @@ func newLogger() {
 	}
 	var zapCores = make([]zapcore.Core, 1, 4)
 	//同时将日志输出到控制台
-	zapCores[0] = zapcore.NewCore(zapcore.NewConsoleEncoder(encoderConfig), zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout)), zapcore.Level(level))
-	if enableFile {
+	zapCores[0] = zapcore.NewCore(zapcore.NewConsoleEncoder(encoderConfig), zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout)), zapcore.Level(LogConfig.level))
+	if LogConfig.enableFile {
 		// 创建日志目录
-		if !IsDir(logDir) {
-			err := os.Mkdir(logDir, 0744)
+		if !IsDir(LogConfig.logDir) {
+			err := os.Mkdir(LogConfig.logDir, 0744)
 			if err != nil {
 				panic(err)
 			}
@@ -86,11 +91,11 @@ func newLogger() {
 		// 获取文件的 io.Writer
 		var infoWriter io.Writer
 		var errorWriter io.Writer
-		infoWriter = GetFileWriter(path.Join(logDir, "info.log"))
-		errorWriter = GetFileWriter(path.Join(logDir, "error.log"))
+		infoWriter = GetFileWriter(path.Join(LogConfig.logDir, "info.log"))
+		errorWriter = GetFileWriter(path.Join(LogConfig.logDir, "error.log"))
 		// 自定义写入 info.log 文件的日志级别
 		var infoLevel = zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
-			return lvl <= zapcore.WarnLevel && lvl >= zapcore.Level(level)
+			return lvl <= zapcore.WarnLevel && lvl >= zapcore.Level(LogConfig.level)
 		})
 
 		// 自定义写入 error.log 文件的日志级别
@@ -107,8 +112,7 @@ func newLogger() {
 		)
 	}
 	core := zapcore.NewTee(zapCores...)
-	Logger = zap.New(core, zap.AddCaller(), zap.AddStacktrace(zap.ErrorLevel))
-	Sugar = Logger.Sugar()
+	return zap.New(core, zap.AddCaller(), zap.AddStacktrace(zap.ErrorLevel)), Logger.Sugar()
 }
 
 func RequestField(requestID, uri, serviceName string) []zap.Field {
