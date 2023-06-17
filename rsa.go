@@ -1,4 +1,4 @@
-package habits
+package eu
 
 import (
 	"crypto/rand"

@@ -1,13 +1,13 @@
-package habits
+package eu
 
-type HabitError struct {
+type SecurityError struct {
 	Msg string
 }
 
-func (receiver HabitError) Error() string {
+func (receiver SecurityError) Error() string {
 	return receiver.Msg
 }
 
-func NewHabitError(Msg string) *HabitError {
-	return &HabitError{Msg: Msg}
+func NewSecurityError(Msg string) *SecurityError {
+	return &SecurityError{Msg: Msg}
 }

@@ -1,4 +1,4 @@
-module github.com/goicmll/small-habits
+module github.com/goicmll/eu
 
 go 1.20
 
