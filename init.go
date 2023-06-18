@@ -1,1 +1,1 @@
-package eu
+package easyuse

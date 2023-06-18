@@ -1,4 +1,4 @@
-module github.com/goicmll/eu
+module github.com/goicmll/easyuse
 
 go 1.20
 

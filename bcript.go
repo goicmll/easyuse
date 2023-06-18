@@ -1,4 +1,4 @@
-package eu
+package easyuse
 
 import "golang.org/x/crypto/bcrypt"
 

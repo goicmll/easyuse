@@ -1,4 +1,4 @@
-package eu
+package easyuse
 
 import (
 	"reflect"
