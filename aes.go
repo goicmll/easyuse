@@ -56,7 +56,7 @@ func AesCBCStrDecrypt(key, origin string) (string, error) {
 	//去除加密是补全的字节, 加密是把补全的位数存入了加密字符串字节切片的最后几位
 	// 去补全码
 	out, err = pkcs7UnPadding(out)
-	return string(out), err
+	return Bytes2Str(out), err
 }
 
 // ########### AES CRT
@@ -77,7 +77,7 @@ func AesCRTCrypt(key, origin string) (string, error) {
 	dst := make([]byte, len(plainText))
 	stream.XORKeyStream(dst, plainText)
 
-	return string(dst), nil
+	return Bytes2Str(dst), nil
 }
 
 // ########### AES OFB
@@ -97,7 +97,7 @@ func AesOFBStrEncrypt(key, origin string) (string, error) {
 
 	stream := cipher.NewOFB(block, iv)
 	stream.XORKeyStream(out[aes.BlockSize:], originByte)
-	return string(out), nil
+	return Bytes2Str(out), nil
 }
 
 // key长度必须为16, 24或者32
@@ -116,7 +116,7 @@ func AesOFBStrDecrypt(key, origin string) (string, error) {
 	mode.XORKeyStream(out, originByte)
 
 	out, err := pkcs7UnPadding(out)
-	return string(out), err
+	return Bytes2Str(out), err
 }
 
 // 补码

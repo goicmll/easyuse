@@ -30,7 +30,7 @@ func RsaDecrypt(originBase64, privateKey string) (string, error) {
 	if err != nil {
 		return "", NewEasyUseError("RSA 密文解密错误")
 	}
-	return string(out), nil
+	return Bytes2Str(out), nil
 }
 
 // RsaEncrypt ########### RSA 加解密
