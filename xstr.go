@@ -2,19 +2,20 @@ package easyuse
 
 import (
 	"math/rand"
-	"time"
 	"reflect"
+	"strings"
+	"time"
 	"unsafe"
 )
 
-// 预定义随机字符串源
+// S5 预定义随机字符串源
 var S5 = Str2SliceByte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!#%^&()")
 var S4 = Str2SliceByte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 var S3 = Str2SliceByte("abcdefghijklmnopqrstuvwxyz")
 var S2 = Str2SliceByte("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 var S1 = Str2SliceByte("0123456789")
 
-// 生成随机字符传
+// Random 生成随机字符传
 func Random(n int, source []byte) string {
 	var lettersLen = len(source)
 	rd := rand.New(rand.NewSource(time.Now().UnixNano()))
@@ -25,7 +26,7 @@ func Random(n int, source []byte) string {
 	return Bytes2Str(r)
 }
 
-// string to []byte
+// Str2SliceByte string to []byte
 func Str2SliceByte(s string) []byte {
 	var b []byte
 	bh := (*reflect.SliceHeader)(unsafe.Pointer(&b))
@@ -36,13 +37,14 @@ func Str2SliceByte(s string) []byte {
 	return b
 }
 
-// bytes to string
+// Bytes2Str bytes to string
 func Bytes2Str(b []byte) string {
 	return *(*string)(unsafe.Pointer(&b))
 }
 
-// 生成占位符
-//  Placeholder(5, "?")  return: "?,?,?,?,?"
+// Placeholder 生成占位符
+//
+//	Placeholder(5, "?")  return: "?,?,?,?,?"
 func Placeholder(n int, holder string) string {
 	ph := make([]string, n)
 	for i := 0; i < n; i++ {
