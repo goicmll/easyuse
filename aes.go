@@ -44,7 +44,10 @@ func AesCBCStrDecrypt(key, origin string) (string, error) {
 	}
 	keyByte := Str2SliceByte(key)
 	// 分组秘钥
-	block, _ := aes.NewCipher(keyByte)
+	block, err := aes.NewCipher(keyByte)
+	if err != nil {
+		return "", NewEasyUseError("key 不可用, 必须为16, 24, 32长度的字符!")
+	}
 	// 获取秘钥块的长度
 	blockSize := block.BlockSize()
 	// 加密模式
@@ -68,7 +71,7 @@ func AesCRTCrypt(key, origin string) (string, error) {
 	//1. 创建cipher.Block接口
 	block, err := aes.NewCipher(keyByte)
 	if err != nil {
-		return "", err
+		return "", NewEasyUseError("key 不可用, 必须为16, 24, 32长度的字符!")
 	}
 	//2. 创建分组模式，在crypto/cipher包中
 	iv := bytes.Repeat(Str2SliceByte("1"), block.BlockSize())
@@ -88,7 +91,10 @@ func AesOFBStrEncrypt(key, origin string) (string, error) {
 	keyByte := Str2SliceByte(key)
 	originByte = pkcs7Padding(originByte, aes.BlockSize)
 
-	block, _ := aes.NewCipher(keyByte)
+	block, err := aes.NewCipher(keyByte)
+	if err != nil {
+		return "", NewEasyUseError("key 不可用, 必须为16, 24, 32长度的字符!")
+	}
 	out := make([]byte, aes.BlockSize+len(originByte))
 	iv := out[:aes.BlockSize]
 	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
@@ -104,7 +110,10 @@ func AesOFBStrEncrypt(key, origin string) (string, error) {
 func AesOFBStrDecrypt(key, origin string) (string, error) {
 	originByte := Str2SliceByte(origin)
 	keyByte := Str2SliceByte(key)
-	block, _ := aes.NewCipher(keyByte)
+	block, err := aes.NewCipher(keyByte)
+	if err != nil {
+		return "", NewEasyUseError("key 不可用, 必须为16, 24, 32长度的字符!")
+	}
 	iv := originByte[:aes.BlockSize]
 	originByte = originByte[aes.BlockSize:]
 	if len(originByte)%aes.BlockSize != 0 {
@@ -115,7 +124,7 @@ func AesOFBStrDecrypt(key, origin string) (string, error) {
 	mode := cipher.NewOFB(block, iv)
 	mode.XORKeyStream(out, originByte)
 
-	out, err := pkcs7UnPadding(out)
+	out, err = pkcs7UnPadding(out)
 	return Bytes2Str(out), err
 }
 

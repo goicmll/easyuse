@@ -1,9 +1,8 @@
 package easyuse
 
 import (
-	"time"
-
 	"github.com/golang-jwt/jwt/v5"
+	"time"
 )
 
 // JwtMake 制作jwt串
