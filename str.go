@@ -16,7 +16,10 @@ var S2 = Str2SliceByte("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 var S1 = Str2SliceByte("0123456789")
 
 // Random 生成随机字符传
-func Random(n int, source []byte) string {
+func Random(n uint, source []byte) string {
+	if n == 0 {
+		return ""
+	}
 	var lettersLen = len(source)
 	rd := rand.New(rand.NewSource(time.Now().UnixNano()))
 	r := make([]byte, n)
@@ -45,10 +48,10 @@ func Bytes2Str(b []byte) string {
 // Placeholder 生成占位符
 //
 //	Placeholder(5, "?")  return: "?,?,?,?,?"
-func Placeholder(n int, holder string) string {
+func Placeholder(n int, holder, sep string) string {
 	ph := make([]string, n)
 	for i := 0; i < n; i++ {
 		ph[i] = holder
 	}
-	return strings.Join(ph, ",")
+	return strings.Join(ph, sep)
 }
