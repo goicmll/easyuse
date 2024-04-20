@@ -4,8 +4,8 @@ type EasyUseError struct {
 	Msg string
 }
 
-func (receiver EasyUseError) Error() string {
-	return receiver.Msg
+func (e EasyUseError) Error() string {
+	return e.Msg
 }
 
 func NewEasyUseError(Msg string) *EasyUseError {
