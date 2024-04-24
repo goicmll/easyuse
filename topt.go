@@ -25,10 +25,6 @@ func NewGoogleAuth(tss ...int64) *GoogleAuth {
 	return ga
 }
 
-func (g *GoogleAuth) un() int64 {
-	return time.Now().UnixNano() / 1000 / g.TimeStepSeconds
-}
-
 func (g *GoogleAuth) hmacSha1(key, data []byte) []byte {
 	h := hmac.New(sha1.New, key)
 	if total := len(data); total > 0 {
@@ -73,7 +69,8 @@ func (g *GoogleAuth) oneTimePassword(key []byte, data []byte) uint32 {
 // GetSecret 获取秘钥
 func (g *GoogleAuth) GetSecret() string {
 	var buf bytes.Buffer
-	_ = binary.Write(&buf, binary.BigEndian, g.un())
+	var t = time.Now().UnixNano()
+	_ = binary.Write(&buf, binary.BigEndian, t)
 	return strings.ToUpper(g.base32encode(g.hmacSha1(buf.Bytes(), nil)))
 }
 
