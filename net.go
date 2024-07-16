@@ -11,8 +11,8 @@ type SSLCertInfo struct {
 	NotAfter  string
 }
 
-// PickHttpsCertInfo 获取https 证书信息
-func PickHttpsCertInfo(url string) (*SSLCertInfo, error) {
+// GetHttpsCertInfo 获取https 证书信息
+func GetHttpsCertInfo(url string) (*SSLCertInfo, error) {
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
