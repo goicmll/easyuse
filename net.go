@@ -1,28 +1,31 @@
 package easyuse
 
 import (
+	"fmt"
 	"net"
 	"net/http"
 )
 
-type SSLCertInfo struct {
-	Url       string
+type CertInfo struct {
+	Domain    string
 	Subject   string
 	NotBefore string
 	NotAfter  string
 }
 
-// GetDomainCertInfo 获取Domain 证书信息
-func GetDomainCertInfo(domain string) (*SSLCertInfo, error) {
-	resp, err := http.Get(domain)
+// GetHttpsCertInfo 获取Domain 证书信息
+func GetHttpsCertInfo(domain string) (*CertInfo, error) {
+	host := fmt.Sprintf("https://%s", domain)
+	resp, err := http.Get(host)
 	if err != nil {
 		return nil, err
 	}
-	sci := SSLCertInfo{}
+	sci := CertInfo{}
 	certInfo := resp.TLS.PeerCertificates[0]
 	sci.NotAfter = certInfo.NotAfter.Format("2006-01-02 15:04:05")
 	sci.NotBefore = certInfo.NotBefore.Format("2006-01-02 15:04:05")
 	sci.Subject = certInfo.Subject.CommonName
+	sci.Domain = domain
 	return &sci, nil
 }
 
